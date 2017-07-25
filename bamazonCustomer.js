@@ -5,6 +5,7 @@ const Inquirer = require('inquirer');
 // This special code is required to turn the MySQL methods into promises
 Promises.promisifyAll(require("mysql/lib/Connection").prototype);
 Promises.promisifyAll(require("mysql/lib/Pool").prototype);
+
 // Connect to MySQL
 var connection = MySQL.createConnection({
 	host: "localhost",
@@ -35,12 +36,30 @@ connection.connectAsync()
 			.then( () => connection.queryAsync(prodQuery) )
 			.then( data => {
 				var holdReturn = data;
-				console.log(JSON.stringify(holdReturn, null, 2));
-				
+				var newQuantity = undefined;
+			console.log(JSON.stringify(holdReturn, null, 2));	
 
-			
-			Inquirer.prompt(questions).then( (data) => {	
-			connection.queryAsync(updateQuery, [data.units, data.id])
+			Inquirer.prompt(questions)
+			.then( (data) => {
+				console.log(data);
+				// get current stock_quantity and set it to a variable to be compared in a function with the requested units.
+				for(x in holdReturn){
+					console.log(holdReturn[x].item_id, data.id);
+					
+					if(holdReturn[x].item_id == data.id) {
+						console.log(holdReturn[x].item_id);
+						if (holdReturn[x].stock_quantity >= data.units) {
+							console.log("We have that in stock!")
+							newQuantity = holdReturn[x].stock_quantity - data.units;
+							var display = holdReturn[x].price * data.units;
+							console.log("Your total is $" + display);
+						} else {
+							console.log("Insufficient quantity!");
+						}	
+					}
+				}
+
+			connection.queryAsync(updateQuery, [newQuantity , data.id])
 			.then( data => console.log(JSON.stringify(data, null, 2)) )
 			.then( () => connection.endAsync() )
 			.catch( ( err ) => { throw err; } );
@@ -61,15 +80,5 @@ function updateInventory( id ){
 				.catch( err => { throw err });	;;
 	}			
 
-
-// connection.connectAsync().then(function(data){
-// 	connection.queryAsync("SELECT * FROM products").then(function(result){
-// 		console.log(result)
-// 	})
-// }).catch(function(err){
-// 	console.log(err)
-// 	})
-
-// Create our Inquirer questions
 
 
