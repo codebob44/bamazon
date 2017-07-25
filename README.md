@@ -13,3 +13,5 @@ However, if bamazon does have enough of the product, the customer's order is ful
 
 When an order is fullfilled, the SQL database updates to reflect the remaining quantity in stock.
 Once the update goes through, the customer is shown the total cost of their purchase.
+
+![Image of updated database](https://github.com/codebob44/bamazon/blob/master/images/Screenshot%20(8).png)
