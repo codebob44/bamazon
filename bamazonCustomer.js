@@ -29,7 +29,7 @@ const questions = [
 ];
 
 let prodQuery = "SELECT * FROM products";
-// let invQuery = "COUNT ";
+
 let updateQuery = "UPDATE products SET stock_quantity = ? WHERE item_id = ?";
 
 connection.connectAsync()
@@ -42,7 +42,7 @@ connection.connectAsync()
 			Inquirer.prompt(questions)
 			.then( (data) => {
 				console.log(data);
-				// get current stock_quantity and set it to a variable to be compared in a function with the requested units.
+				
 				for(x in holdReturn){
 					console.log(holdReturn[x].item_id, data.id);
 					
